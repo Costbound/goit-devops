@@ -12,6 +12,10 @@ spec:
       labels:
         app: {{ .Release.Name }}-django
     spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          command: ['sh', '-c', 'until nc -z {{ .Values.config.POSTGRES_HOST }} {{ .Values.config.POSTGRES_PORT }}; do echo "Waiting for database..."; sleep 2; done']
       containers:
         - name: django
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

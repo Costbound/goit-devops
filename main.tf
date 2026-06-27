@@ -16,7 +16,6 @@ provider "aws" {
 module "s3_backend" {
   source      = "./modules/s3-backend"
   bucket_name = "lesson-7-terraform-state-bucket-adfjhad"
-  table_name  = "lesson-7-terraform-state-lock-table"
 }
 
 module "vpc" {

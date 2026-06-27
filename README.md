@@ -111,3 +111,93 @@ Creates an Elastic Container Registry repository for storing Docker images:
 | `scan_on_push` | Enable automatic vulnerability scanning (default: `true`) |
 
 **Outputs:** `repository_url` — use this with `docker push` to publish images.
+
+### `eks`
+
+Creates a fully managed Kubernetes cluster on AWS EKS:
+
+- **EKS Cluster** — control plane with API authentication mode, public + private endpoint access
+- **IAM Role (cluster)** — grants EKS service permission to manage AWS resources
+- **Managed Node Group** — EC2 worker nodes (`t3.medium`) with auto-scaling
+- **IAM Role (nodes)** — grants nodes permissions for ECR pull, CNI networking, worker policies
+
+| Variable          | Description                          |
+| ----------------- | ------------------------------------ |
+| `cluster_name`    | Name of the EKS cluster              |
+| `subnet_ids`      | Private subnet IDs to place nodes in |
+| `node_group_name` | Name of the managed node group       |
+| `instance_type`   | EC2 instance type for worker nodes   |
+| `desired_size`    | Desired number of nodes              |
+| `max_size`        | Maximum number of nodes              |
+| `min_size`        | Minimum number of nodes              |
+
+**Outputs:** `eks_cluster_name`, `eks_cluster_endpoint`, `eks_node_role_arn`
+
+---
+
+## Helm Chart — `charts/django-app`
+
+Deploys the Django application to the EKS cluster.
+
+### Chart structure
+
+```
+charts/django-app/
+├── Chart.yaml                  # Chart metadata and dependencies
+├── values.yaml                 # Non-sensitive default values (committed)
+├── secrets.yml                 # Real credentials — gitignored, never committed
+├── secrets.yaml.example        # Template for secrets.yml — copy and fill in
+└── templates/
+    ├── deployment.yaml         # Django Deployment with envFrom ConfigMap
+    ├── service.yaml            # LoadBalancer Service (port 80 → 8000)
+    ├── hpa.yaml                # HPA — scales 2 to 6 pods at >70% CPU
+    └── configmap.yaml          # Non-sensitive env vars for Django
+```
+
+### Dependencies (auto-installed)
+
+| Chart            | Purpose                                                                           |
+| ---------------- | --------------------------------------------------------------------------------- |
+| `metrics-server` | Required by HPA to read CPU metrics                                               |
+| `postgresql`     | PostgreSQL database running inside Kubernetes (demo only — use RDS in production) |
+
+### Setup secrets
+
+```bash
+cp charts/django-app/secrets.yaml.example charts/django-app/secrets.yml
+# Edit secrets.yml with real ECR URL, DB user and password
+```
+
+### Deploy
+
+```bash
+# 1. Configure kubectl
+aws eks update-kubeconfig --region us-east-1 --name lesson-7-eks-cluster --profile <your-profile>
+
+# 2. Pull Helm dependencies
+helm dependency update ./charts/django-app
+
+# 3. Install
+helm install django-app ./charts/django-app \
+  -f charts/django-app/values.yaml \
+  -f charts/django-app/secrets.yml
+
+# 4. Check status
+kubectl get pods
+kubectl get svc django-app-django   # EXTERNAL-IP is the Load Balancer DNS
+kubectl get hpa
+```
+
+### Push Docker image to ECR
+
+```bash
+aws ecr get-login-password --region us-east-1 --profile <your-profile> | \
+  docker login --username AWS --password-stdin \
+  615299736927.dkr.ecr.us-east-1.amazonaws.com
+
+docker build --platform linux/amd64 -t lesson7/django-app .
+docker tag lesson7/django-app:latest \
+  615299736927.dkr.ecr.us-east-1.amazonaws.com/lesson7/django-app:latest
+docker push \
+  615299736927.dkr.ecr.us-east-1.amazonaws.com/lesson7/django-app:latest
+```

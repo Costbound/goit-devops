@@ -28,11 +28,6 @@ output "s3_bucket_name" {
   value       = module.s3_backend.s3_bucket_name
 }
 
-output "dynamodb_table_name" {
-  description = "Name of the Terraform state lock DynamoDB table"
-  value       = module.s3_backend.dynamodb_table_name
-}
-
 output "eks_cluster_name" {
   description = "Name of the EKS cluster"
   value       = module.eks.eks_cluster_name

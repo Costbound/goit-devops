@@ -2,8 +2,9 @@
 .env
 
 # Helm secret values
-secrets.yml
-
+secrets.yaml
+# Helm downloaded dependencies
+charts/django-app/charts/
 # Terraform working directory
 .terraform/
 
