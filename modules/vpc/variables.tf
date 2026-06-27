@@ -23,3 +23,9 @@ variable "vpc_name" {
   type        = string
 }
 
+variable "cluster_name" {
+  description = "EKS cluster name for subnet tags"
+  type        = string
+  default     = ""
+}
+

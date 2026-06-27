@@ -1,0 +1,31 @@
+image:
+  repository: ""
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+hpa:
+  minReplicas: 2
+  maxReplicas: 6
+  cpuUtilizationPercentage: 70
+
+config:
+  POSTGRES_HOST: db
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: django_db
+  POSTGRES_USER: ""
+  POSTGRES_PASSWORD: ""

@@ -32,3 +32,18 @@ output "dynamodb_table_name" {
   description = "Name of the Terraform state lock DynamoDB table"
   value       = module.s3_backend.dynamodb_table_name
 }
+
+output "eks_cluster_name" {
+  description = "Name of the EKS cluster"
+  value       = module.eks.eks_cluster_name
+}
+
+output "eks_cluster_endpoint" {
+  description = "EKS API endpoint"
+  value       = module.eks.eks_cluster_endpoint
+}
+
+output "eks_kubeconfig_command" {
+  description = "Command to configure kubectl"
+  value       = "aws eks update-kubeconfig --region us-east-1 --name ${module.eks.eks_cluster_name}"
+}

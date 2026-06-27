@@ -1,4 +1,4 @@
-# GoIT DevOps — Lesson 5: Terraform AWS Infrastructure
+# GoIT DevOps — Lesson 7: Terraform AWS Infrastructure
 
 ## Project Structure
 
