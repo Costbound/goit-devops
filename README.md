@@ -7,10 +7,17 @@
 ├── backend.tf          # S3 remote backend configuration
 ├── main.tf             # Root module — calls all child modules
 ├── outputs.tf          # Root-level outputs
+├── django-app/         # Django application source code
+│   ├── Dockerfile
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── hello/          # Example Django app
+│   └── hw4/            # Django project settings
+├── charts/
+│   └── django-app/     # Helm chart for deploying to EKS
 └── modules/
-    ├── s3-backend/     # S3 bucket + DynamoDB for Terraform state
+    ├── s3-backend/     # S3 bucket for Terraform state
     │   ├── s3.tf
-    │   ├── dynamodb.tf
     │   ├── variables.tf
     │   └── outputs.tf
     ├── vpc/            # VPC, subnets, IGW, NAT Gateway, route tables
@@ -18,23 +25,31 @@
     │   ├── routes.tf
     │   ├── variables.tf
     │   └── outputs.tf
-    └── ecr/            # ECR repository with scanning and access policy
-        ├── ecr.tf
+    ├── ecr/            # ECR repository with scanning and access policy
+    │   ├── ecr.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    └── eks/            # EKS cluster and managed node group
+        ├── eks.tf
+        ├── node.tf
         ├── variables.tf
-        └── output.tf
+        └── outputs.tf
 ```
 
 ## Prerequisites
 
 - [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0
-- AWS CLI configured with credentials (`aws configure`)
-- Sufficient IAM permissions (S3, DynamoDB, VPC, ECR)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) configured with credentials (`aws configure`)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Helm](https://helm.sh/docs/intro/install/) >= 3
+- [Docker](https://docs.docker.com/get-docker/) (for building and pushing the Django image)
+- Sufficient IAM permissions (S3, VPC, ECR, EKS)
 
 ## Commands
 
 ### First-time setup (create S3 backend resources first)
 
-The S3 bucket and DynamoDB table must exist before using them as a backend.
+The S3 bucket must exist before using it as a backend.
 Comment out the `backend "s3"` block in `backend.tf`, run `terraform apply` to create the
 `s3_backend` module resources, then uncomment the backend block and run `terraform init` again.
 
@@ -71,12 +86,11 @@ Creates the remote backend infrastructure for storing Terraform state:
 - **S3 bucket** — stores the `terraform.tfstate` file with versioning enabled
 - **S3 encryption** — AES-256 server-side encryption enforced at bucket level
 - **S3 public access block** — all public access blocked
-- **DynamoDB table** — provides state locking to prevent concurrent modifications
+- **S3 native locking** — `use_lockfile = true` prevents concurrent state modifications (no DynamoDB needed)
 
-| Variable      | Description                     |
-| ------------- | ------------------------------- |
-| `bucket_name` | Name of the S3 bucket           |
-| `table_name`  | Name of the DynamoDB lock table |
+| Variable      | Description             |
+| ------------- | ----------------------- |
+| `bucket_name` | Name of the S3 bucket   |
 
 ### `vpc`
 
@@ -135,6 +149,42 @@ Creates a fully managed Kubernetes cluster on AWS EKS:
 
 ---
 
+## Full Deployment Flow
+
+Follow these steps in order to go from zero to a running app:
+
+```bash
+# 1. Provision AWS infrastructure
+terraform init
+terraform apply
+
+# 2. Configure kubectl to talk to the new EKS cluster
+aws eks update-kubeconfig --region us-east-1 --name lesson-7-eks-cluster
+
+# 3. Build and push the Django image to ECR
+ECR_URL=$(terraform output -raw ecr_repository_url)
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_URL
+docker build --platform linux/amd64 -t django-app ./django-app
+docker tag django-app:latest $ECR_URL:latest
+docker push $ECR_URL:latest
+
+# 4. Set up Helm secrets
+cp charts/django-app/secrets.yaml.example charts/django-app/secrets.yaml
+# Edit secrets.yaml — set ECR repository URL, DB user, and DB password
+
+# 5. Install the Helm chart
+helm dependency update ./charts/django-app
+helm install django-app ./charts/django-app \
+  -f charts/django-app/values.yaml \
+  -f charts/django-app/secrets.yaml
+
+# 6. Verify
+kubectl get pods
+kubectl get svc django-app-django   # EXTERNAL-IP is the Load Balancer DNS
+```
+
+---
+
 ## Helm Chart — `charts/django-app`
 
 Deploys the Django application to the EKS cluster.
@@ -145,34 +195,34 @@ Deploys the Django application to the EKS cluster.
 charts/django-app/
 ├── Chart.yaml                  # Chart metadata and dependencies
 ├── values.yaml                 # Non-sensitive default values (committed)
-├── secrets.yml                 # Real credentials — gitignored, never committed
-├── secrets.yaml.example        # Template for secrets.yml — copy and fill in
+├── secrets.yaml                # Real credentials — gitignored, never committed
+├── secrets.yaml.example        # Template for secrets.yaml — copy and fill in
 └── templates/
     ├── deployment.yaml         # Django Deployment with envFrom ConfigMap
+    ├── db.yaml                 # PostgreSQL Deployment + Service (in-cluster DB)
     ├── service.yaml            # LoadBalancer Service (port 80 → 8000)
     ├── hpa.yaml                # HPA — scales 2 to 6 pods at >70% CPU
     └── configmap.yaml          # Non-sensitive env vars for Django
 ```
 
-### Dependencies (auto-installed)
+### Dependencies
 
-| Chart            | Purpose                                                                           |
-| ---------------- | --------------------------------------------------------------------------------- |
-| `metrics-server` | Required by HPA to read CPU metrics                                               |
-| `postgresql`     | PostgreSQL database running inside Kubernetes (demo only — use RDS in production) |
+| Chart            | Purpose                                     |
+| ---------------- | ------------------------------------------- |
+| `metrics-server` | Required by HPA to read CPU metrics         |
 
 ### Setup secrets
 
 ```bash
-cp charts/django-app/secrets.yaml.example charts/django-app/secrets.yml
-# Edit secrets.yml with real ECR URL, DB user and password
+cp charts/django-app/secrets.yaml.example charts/django-app/secrets.yaml
+# Edit secrets.yaml — set ECR repository URL, DB user, and DB password
 ```
 
 ### Deploy
 
 ```bash
 # 1. Configure kubectl
-aws eks update-kubeconfig --region us-east-1 --name lesson-7-eks-cluster --profile <your-profile>
+aws eks update-kubeconfig --region us-east-1 --name lesson-7-eks-cluster
 
 # 2. Pull Helm dependencies
 helm dependency update ./charts/django-app
@@ -180,7 +230,7 @@ helm dependency update ./charts/django-app
 # 3. Install
 helm install django-app ./charts/django-app \
   -f charts/django-app/values.yaml \
-  -f charts/django-app/secrets.yml
+  -f charts/django-app/secrets.yaml
 
 # 4. Check status
 kubectl get pods
@@ -190,14 +240,14 @@ kubectl get hpa
 
 ### Push Docker image to ECR
 
-```bash
-aws ecr get-login-password --region us-east-1 --profile <your-profile> | \
-  docker login --username AWS --password-stdin \
-  615299736927.dkr.ecr.us-east-1.amazonaws.com
+Get the ECR URL from Terraform output — no need to hardcode it:
 
-docker build --platform linux/amd64 -t lesson7/django-app .
-docker tag lesson7/django-app:latest \
-  615299736927.dkr.ecr.us-east-1.amazonaws.com/lesson7/django-app:latest
-docker push \
-  615299736927.dkr.ecr.us-east-1.amazonaws.com/lesson7/django-app:latest
+```bash
+ECR_URL=$(terraform output -raw ecr_repository_url)
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_URL
+docker build --platform linux/amd64 -t django-app ./django-app
+docker tag django-app:latest $ECR_URL:latest
+docker push $ECR_URL:latest
 ```
+
+> **Note:** Always build with `--platform linux/amd64` when deploying to EKS from an Apple Silicon Mac.
