@@ -30,3 +30,52 @@ controller:
     - configuration-as-code:latest
     - credentials-binding:latest
     - github:latest
+    - job-dsl:latest
+
+  JCasC:
+    configScripts:
+      kubernetes-cloud: |
+        jenkins:
+          clouds:
+            - kubernetes:
+                name: "kubernetes"
+                serverUrl: "https://kubernetes.default.svc"
+                namespace: "jenkins"
+                jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:80"
+                jenkinsTunnel: "jenkins-agent.jenkins.svc.cluster.local:50000"
+                templates:
+                  - name: "kaniko-agent"
+                    namespace: "jenkins"
+                    serviceAccount: "jenkins"
+                    containers:
+                      - name: "kaniko"
+                        image: "gcr.io/kaniko-project/executor:debug"
+                        command: "/busybox/cat"
+                        ttyEnabled: true
+                        resourceRequestCpu: "500m"
+                        resourceRequestMemory: "1Gi"
+                        resourceLimitCpu: "1"
+                        resourceLimitMemory: "2Gi"
+                      - name: "jnlp"
+                        image: "jenkins/inbound-agent:latest"
+                        resourceRequestCpu: "200m"
+                        resourceRequestMemory: "256Mi"
+      pipeline-job: |
+        jobs:
+          - script: >
+              pipelineJob('django-app') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/Costbound/goit-devops.git')
+                          credentials('github-credentials')
+                        }
+                        branch('*/main')
+                      }
+                    }
+                    scriptPath('Jenkinsfile')
+                  }
+                }
+              }

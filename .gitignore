@@ -13,3 +13,4 @@ terraform.tfstate
 terraform.tfstate.backup
 errored.tfstate
 .terraform.lock.hcl
+.terraform.tfstate.lock.info

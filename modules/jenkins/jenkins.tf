@@ -24,5 +24,10 @@ resource "helm_release" "jenkins" {
         file("${path.module}/secrets.yaml")
     ]
 
+    set {
+      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = aws_iam_role.jenkins_agent.arn
+    }
+
     depends_on = [kubernetes_annotations.gp2_default]
 }
