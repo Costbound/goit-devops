@@ -55,10 +55,12 @@ spec:
                         git config user.email "jenkins@ci.local"
                         git config user.name "Jenkins"
                         git remote set-url origin https://\${GIT_USER}:\${GIT_TOKEN}@\${GIT_REPO_URL#https://}
+                        git fetch origin main
+                        git checkout -B main origin/main
                         sed -i 's|tag:.*|tag: "${IMAGE_TAG}"|' charts/django-app/values.yaml
                         git add charts/django-app/values.yaml
                         git commit -m "ci: update django-app image tag to ${IMAGE_TAG}"
-                        git push origin HEAD:main
+                        git push origin main
                     """
                 }
             }
