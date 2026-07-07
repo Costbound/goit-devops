@@ -57,9 +57,10 @@ spec:
                         git remote set-url origin https://\${GIT_USER}:\${GIT_TOKEN}@\${GIT_REPO_URL#https://}
                         git fetch origin main
                         git checkout -B main origin/main
+                        git checkout origin/lesson-8-9 -- charts/django-app/templates/ charts/django-app/Chart.yaml
                         sed -i 's|tag:.*|tag: "${IMAGE_TAG}"|' charts/django-app/values.yaml
-                        git add charts/django-app/values.yaml
-                        git commit -m "ci: update django-app image tag to ${IMAGE_TAG}"
+                        git add charts/django-app/
+                        git commit -m "ci: update django-app image tag to ${IMAGE_TAG} and sync chart templates"
                         git push origin main
                     """
                 }
