@@ -58,7 +58,7 @@ spec:
                         sed -i 's|tag:.*|tag: "${IMAGE_TAG}"|' charts/django-app/values.yaml
                         git add charts/django-app/values.yaml
                         git commit -m "ci: update django-app image tag to ${IMAGE_TAG}"
-                        git push origin HEAD:lesson-8-9
+                        git push origin HEAD:main
                     """
                 }
             }
