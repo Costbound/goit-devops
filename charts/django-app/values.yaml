@@ -1,6 +1,6 @@
 image:
   repository: ""
-  tag: "11439c2"
+  tag: "b0d251c"
   pullPolicy: Always
 
 replicaCount: 2
