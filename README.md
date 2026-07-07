@@ -88,9 +88,9 @@ Creates the remote backend infrastructure for storing Terraform state:
 - **S3 public access block** — all public access blocked
 - **S3 native locking** — `use_lockfile = true` prevents concurrent state modifications (no DynamoDB needed)
 
-| Variable      | Description             |
-| ------------- | ----------------------- |
-| `bucket_name` | Name of the S3 bucket   |
+| Variable      | Description           |
+| ------------- | --------------------- |
+| `bucket_name` | Name of the S3 bucket |
 
 ### `vpc`
 
@@ -159,7 +159,7 @@ terraform init
 terraform apply
 
 # 2. Configure kubectl to talk to the new EKS cluster
-aws eks update-kubeconfig --region us-east-1 --name lesson-7-eks-cluster
+aws eks update-kubeconfig --region us-east-1 --name lesson-8-9-eks-cluster
 
 # 3. Build and push the Django image to ECR
 ECR_URL=$(terraform output -raw ecr_repository_url)
@@ -207,9 +207,9 @@ charts/django-app/
 
 ### Dependencies
 
-| Chart            | Purpose                                     |
-| ---------------- | ------------------------------------------- |
-| `metrics-server` | Required by HPA to read CPU metrics         |
+| Chart            | Purpose                             |
+| ---------------- | ----------------------------------- |
+| `metrics-server` | Required by HPA to read CPU metrics |
 
 ### Setup secrets
 
@@ -222,7 +222,7 @@ cp charts/django-app/secrets.yaml.example charts/django-app/secrets.yaml
 
 ```bash
 # 1. Configure kubectl
-aws eks update-kubeconfig --region us-east-1 --name lesson-7-eks-cluster
+aws eks update-kubeconfig --region us-east-1 --name lesson-8-9-eks-cluster
 
 # 2. Pull Helm dependencies
 helm dependency update ./charts/django-app

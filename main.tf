@@ -1,21 +1,6 @@
-terraform {
-  required_version = ">= 1.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = "us-east-1"
-}
-
 module "s3_backend" {
   source      = "./modules/s3-backend"
-  bucket_name = "lesson-7-terraform-state-bucket-adfjhad"
+  bucket_name = "lesson-8-9-terraform-state-bucket-adfjhad"
 }
 
 module "vpc" {
@@ -24,8 +9,8 @@ module "vpc" {
   public_subnets     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   private_subnets    = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
   availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
-  vpc_name           = "lesson-7-vpc"
-  cluster_name       = "lesson-7-eks-cluster"
+  vpc_name           = "lesson-8-9-vpc"
+  cluster_name       = "lesson-8-9-eks-cluster"
 }
 
 module "ecr" {
@@ -35,11 +20,21 @@ module "ecr" {
 }
 module "eks" {
   source          = "./modules/eks"
-  cluster_name    = "lesson-7-eks-cluster"
+  cluster_name    = "lesson-8-9-eks-cluster"
   subnet_ids      = module.vpc.private_subnets
-  node_group_name = "lesson-7-node-group"
+  node_group_name = "lesson-8-9-node-group"
   instance_type   = "t3.medium"
   desired_size    = 2
   max_size        = 3
   min_size        = 1
+}
+
+module "jenkins" {
+  source          = "./modules/jenkins"
+  cluster_name = module.eks.eks_cluster_name
+
+  providers = {
+    helm       = helm
+    kubernetes = kubernetes
+  }
 }

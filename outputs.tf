@@ -42,3 +42,16 @@ output "eks_kubeconfig_command" {
   description = "Command to configure kubectl"
   value       = "aws eks update-kubeconfig --region us-east-1 --name ${module.eks.eks_cluster_name}"
 }
+
+output "jenkins_release" {
+  value = module.jenkins.jenkins_release_name
+}
+
+output "jenkins_namespace" {
+  value = module.jenkins.jenkins_namespace
+}
+
+output "jenkins_url" {
+  description = "Jenkins web UI URL"
+  value       = module.jenkins.jenkins_url
+}
