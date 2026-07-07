@@ -40,3 +40,16 @@ module "jenkins" {
     kubernetes = kubernetes
   }
 }
+
+module "agro_cd" {
+  source            = "./modules/agro_cd"
+  cluster_name      = module.eks.eks_cluster_name
+  db_user           = var.db_user
+  db_password       = var.db_password
+  django_secret_key = var.django_secret_key
+
+  providers = {
+    helm       = helm
+    kubernetes = kubernetes
+  }
+}

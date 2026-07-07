@@ -55,3 +55,8 @@ output "jenkins_url" {
   description = "Jenkins web UI URL"
   value       = module.jenkins.jenkins_url
 }
+
+output "argocd_url" {
+  description = "Argo CD web UI URL"
+  value       = module.agro_cd.argocd_url
+}

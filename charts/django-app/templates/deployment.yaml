@@ -25,6 +25,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-config
+            - secretRef:
+                name: django-app-secrets
           resources:
             requests:
               cpu: {{ .Values.resources.requests.cpu }}

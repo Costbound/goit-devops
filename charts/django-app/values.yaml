@@ -27,9 +27,6 @@ config:
   POSTGRES_HOST: db
   POSTGRES_PORT: "5432"
   POSTGRES_DB: django_db
-  POSTGRES_USER: "" # set in secrets.yaml
-  POSTGRES_PASSWORD: "" # set in secrets.yaml
-  SECRET_KEY: "" # set in secrets.yaml
   ALLOWED_HOSTS: "*"
   DEBUG: "False"
 

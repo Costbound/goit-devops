@@ -3,6 +3,9 @@
 
 # Helm secret values
 secrets.yaml
+
+# Terraform secret values
+terraform.tfvars
 # Helm downloaded dependencies
 charts/django-app/charts/
 # Terraform working directory

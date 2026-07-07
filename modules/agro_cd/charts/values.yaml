@@ -1,0 +1,15 @@
+application:
+  name: django-app
+  namespace: argocd
+  project: default
+  repoURL: https://github.com/Costbound/goit-devops.git
+  targetRevision: main
+  path: charts/django-app
+  destinationNamespace: django-app
+
+repository:
+  enabled: false
+  name: ""
+  url: ""
+  username: ""
+  password: ""
