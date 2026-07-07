@@ -72,7 +72,7 @@ controller:
                           url('https://github.com/Costbound/goit-devops.git')
                           credentials('github-credentials')
                         }
-                        branch('*/main')
+                        branch('*/lesson-8-9')
                       }
                     }
                     scriptPath('Jenkinsfile')
