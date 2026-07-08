@@ -35,6 +35,15 @@ module "jenkins" {
   oidc_provider_arn = module.eks.oidc_provider_arn
   oidc_provider_url = module.eks.oidc_provider_url
 
+  github_username        = var.github_username
+  github_token           = var.github_token
+  jenkins_admin_username = var.jenkins_admin_username
+  jenkins_admin_password = var.jenkins_admin_password
+  git_repo_url           = var.git_repo_url
+  git_branch             = var.git_branch
+  ecr_registry           = split("/", module.ecr.repository_url)[0]
+  ecr_repo               = join("/", slice(split("/", module.ecr.repository_url), 1, length(split("/", module.ecr.repository_url))))
+
   providers = {
     helm       = helm
     kubernetes = kubernetes

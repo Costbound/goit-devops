@@ -60,22 +60,3 @@ controller:
                         image: "jenkins/inbound-agent:latest"
                         resourceRequestCpu: "200m"
                         resourceRequestMemory: "256Mi"
-      pipeline-job: |
-        jobs:
-          - script: >
-              pipelineJob('django-app') {
-                definition {
-                  cpsScm {
-                    scm {
-                      git {
-                        remote {
-                          url('https://github.com/Costbound/goit-devops.git')
-                          credentials('github-credentials')
-                        }
-                        branch('*/lesson-8-9')
-                      }
-                    }
-                    scriptPath('Jenkinsfile')
-                  }
-                }
-              }

@@ -21,7 +21,16 @@ resource "helm_release" "jenkins" {
 
     values = [
         file("${path.module}/values.yaml"),
-        file("${path.module}/secrets.yaml")
+        templatefile("${path.module}/secrets.yaml.tpl", {
+          jenkins_admin_username = var.jenkins_admin_username
+          jenkins_admin_password = var.jenkins_admin_password
+          github_username        = var.github_username
+          github_token           = var.github_token
+          git_repo_url           = var.git_repo_url
+          git_branch             = var.git_branch
+          ecr_registry           = var.ecr_registry
+          ecr_repo               = var.ecr_repo
+        })
     ]
 
     set {

@@ -1,7 +1,7 @@
 # Environment variables
 .env
 
-# Helm secret values
+# Helm secret values (generated from secrets.yaml.tpl via terraform)
 secrets.yaml
 
 # Terraform secret values
