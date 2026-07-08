@@ -64,9 +64,6 @@ controller:
         jobs:
           - script: >
               pipelineJob('django-app') {
-                triggers {
-                  scm('H/5 * * * *')
-                }
                 definition {
                   cpsScm {
                     scm {
