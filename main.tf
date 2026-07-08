@@ -15,7 +15,7 @@ module "vpc" {
 
 module "ecr" {
   source      = "./modules/ecr"
-  ecr_name    = "lesson7/django-app"
+  ecr_name    = "lesson-8-9/django-app"
   scan_on_push = true
 }
 module "eks" {

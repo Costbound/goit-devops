@@ -24,9 +24,7 @@ spec:
     }
 
     environment {
-        ECR_REGISTRY  = "615299736927.dkr.ecr.us-east-1.amazonaws.com"
-        ECR_REPO      = "lesson7/django-app"
-        IMAGE_TAG     = "${env.GIT_COMMIT[0..6]}"
+        IMAGE_TAG = "${env.GIT_COMMIT[0..6]}"
     }
 
     stages {
@@ -58,10 +56,15 @@ spec:
                         git fetch origin main
                         git checkout -B main origin/main
                         git checkout origin/lesson-8-9 -- charts/django-app/templates/ charts/django-app/Chart.yaml
+                        sed -i "s|repository:.*|repository: \${ECR_REGISTRY}/\${ECR_REPO}|" charts/django-app/values.yaml
                         sed -i 's|tag:.*|tag: "${IMAGE_TAG}"|' charts/django-app/values.yaml
                         git add charts/django-app/
-                        git commit -m "ci: update django-app image tag to ${IMAGE_TAG} and sync chart templates"
-                        git push origin main
+                        if git diff --cached --quiet; then
+                            echo "No changes to commit"
+                        else
+                            git commit -m "ci: update django-app image tag to ${IMAGE_TAG} and sync chart templates"
+                            git push origin main
+                        fi
                     """
                 }
             }

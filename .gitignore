@@ -12,7 +12,7 @@ charts/django-app/charts/
 .terraform/
 
 # State files
-terraform.tfstate
+terraform.tfstate*
 terraform.tfstate.backup
 errored.tfstate
 .terraform.lock.hcl
