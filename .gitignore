@@ -1,6 +1,11 @@
 # Environment variables
 .env
 
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
 # Helm secret values (generated from secrets.yaml.tpl via terraform)
 secrets.yaml
 

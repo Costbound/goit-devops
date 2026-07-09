@@ -1,0 +1,19 @@
+# Copy this file to terraform.tfvars and fill in the values.
+# terraform.tfvars is gitignored and must never be committed.
+
+# PostgreSQL credentials for the Django app
+db_user           = "django_user"
+db_password       = "change-me"
+django_secret_key = "change-me"
+
+# GitHub credentials for Jenkins (Personal Access Token with repo + write:packages scopes)
+github_username = "your-github-username"
+github_token    = "ghp_your_personal_access_token"
+
+# Jenkins admin credentials
+jenkins_admin_username = "admin"
+jenkins_admin_password = "change-me"
+
+# Git repository settings
+git_repo_url = "https://github.com/your-org/your-repo.git"
+git_branch   = "lesson-8-9"

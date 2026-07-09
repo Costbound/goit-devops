@@ -56,6 +56,7 @@ module "agro_cd" {
   db_user           = var.db_user
   db_password       = var.db_password
   django_secret_key = var.django_secret_key
+  repo_url          = var.git_repo_url
 
   providers = {
     helm       = helm

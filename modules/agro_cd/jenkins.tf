@@ -30,5 +30,5 @@ resource "helm_release" "argocd_config" {
     value = var.target_revision
   }
 
-  depends_on = [helm_release.argocd]
+  depends_on = [helm_release.argocd, kubernetes_namespace.django_app]
 }

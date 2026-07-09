@@ -55,7 +55,7 @@ spec:
                         git remote set-url origin https://\${GIT_USER}:\${GIT_TOKEN}@\${GIT_REPO_URL#https://}
                         git fetch origin main
                         git checkout -B main origin/main
-                        git checkout origin/lesson-8-9 -- charts/django-app/templates/ charts/django-app/Chart.yaml
+                        git checkout origin/${GIT_BRANCH} -- charts/django-app/templates/ charts/django-app/Chart.yaml
                         sed -i "s|repository:.*|repository: \${ECR_REGISTRY}/\${ECR_REPO}|" charts/django-app/values.yaml
                         sed -i 's|tag:.*|tag: "${IMAGE_TAG}"|' charts/django-app/values.yaml
                         git add charts/django-app/

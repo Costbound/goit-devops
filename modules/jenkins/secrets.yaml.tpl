@@ -2,11 +2,6 @@ controller:
   admin:
     username: ${jenkins_admin_username}
     password: ${jenkins_admin_password}
-  additionalEnvs:
-    - name: GIT_REPO_URL
-      value: "${git_repo_url}"
-    - name: GIT_BRANCH
-      value: "${git_branch}"
   JCasC:
     configScripts:
       credentials: |

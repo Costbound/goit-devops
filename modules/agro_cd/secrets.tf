@@ -2,8 +2,6 @@ resource "kubernetes_namespace" "django_app" {
   metadata {
     name = "django-app"
   }
-
-  depends_on = [helm_release.argocd_config]
 }
 
 resource "kubernetes_secret" "django_app" {
