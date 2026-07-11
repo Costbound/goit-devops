@@ -58,5 +58,5 @@ output "jenkins_url" {
 
 output "argocd_url" {
   description = "Argo CD web UI URL"
-  value       = module.agro_cd.argocd_url
+  value       = module.argo_cd.argocd_url
 }

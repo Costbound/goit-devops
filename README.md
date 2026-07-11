@@ -53,7 +53,7 @@ git push → lesson-8-9
     ├── ecr/                    # ECR repository
     ├── eks/                    # EKS cluster, node group, OIDC, EBS CSI driver
     ├── jenkins/                # Jenkins Helm release + IRSA role for ECR push
-    └── agro_cd/                # Argo CD Helm release, Application CRD, k8s secret
+    └── argo_cd/                # Argo CD Helm release, Application CRD, k8s secret
 ```
 
 ---
@@ -172,7 +172,7 @@ terraform.tfvars
 Key files:
 
 - `modules/jenkins/secrets.yaml.tpl` — Terraform template for Jenkins Helm secrets values
-- `modules/agro_cd/secrets.tf` — creates `django-app-secrets` Kubernetes secret
+- `modules/argo_cd/secrets.tf` — creates `django-app-secrets` Kubernetes secret
 - `charts/django-app/templates/deployment.yaml` — mounts secret via `secretRef`
 - `charts/django-app/templates/db.yaml` — mounts credentials via `secretKeyRef`
 
@@ -202,12 +202,12 @@ django-app LoadBalancer service
 ```bash
 # Step 1: remove the Argo CD Application — this cascades deletion of all django-app
 # resources including the LoadBalancer service, triggering AWS LB cleanup
-terraform destroy -target=module.agro_cd.helm_release.argocd_config
+terraform destroy -target=module.argo_cd.helm_release.argocd_config
 
 # Step 2: wait ~60s for AWS to finish deleting the load balancers
 
 # Step 3: destroy remaining Helm releases (Jenkins + Argo CD controller)
-terraform destroy -target=module.jenkins -target=module.agro_cd
+terraform destroy -target=module.jenkins -target=module.argo_cd
 
 # Step 4: destroy everything else
 terraform destroy
@@ -224,4 +224,4 @@ terraform destroy
 | `ecr`        | ECR repository with `scan_on_push` enabled                                                   |
 | `eks`        | EKS cluster (1.31), managed node group (t3.medium, 2–3 nodes), OIDC provider, EBS CSI driver |
 | `jenkins`    | Jenkins via Helm (chart 5.9.32), JCasC auto-config, IRSA role with ECR push permissions      |
-| `agro_cd`    | Argo CD via Helm (chart 7.7.0), Application CRD pointing at `charts/django-app` on `main`    |
+| `argo_cd`    | Argo CD via Helm (chart 7.7.0), Application CRD pointing at `charts/django-app` on `main`    |

@@ -50,8 +50,8 @@ module "jenkins" {
   }
 }
 
-module "agro_cd" {
-  source            = "./modules/agro_cd"
+module "argo_cd" {
+  source            = "./modules/argo_cd"
   cluster_name      = module.eks.eks_cluster_name
   db_user           = var.db_user
   db_password       = var.db_password
