@@ -29,6 +29,10 @@ resource "aws_db_parameter_group" "standard" {
   family      = var.parameter_group_family_rds
   description = "Standard RDS PG for ${var.name}"
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   dynamic "parameter" {
     for_each = var.parameters
     content {

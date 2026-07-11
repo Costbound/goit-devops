@@ -68,7 +68,7 @@ module "argo_cd" {
 module "rds" {
   source = "./modules/rds"
 
-  name                       = "myapp-db"
+  name                       = "lesson-db-module-db"
   use_aurora                 = false
   aurora_instance_count      = 2
 
@@ -88,7 +88,7 @@ module "rds" {
   publicly_accessible        = false
   allowed_cidr_blocks        = ["10.0.0.0/16"]
   vpc_id                     = module.vpc.vpc_id
-  multi_az                   = true
+  multi_az                   = false  # dev setting — no need for Multi-AZ
   backup_retention_period    = 7
   parameters = {
     max_connections              = "200"
@@ -97,6 +97,6 @@ module "rds" {
 
   tags = {
     Environment = "dev"
-    Project     = "myapp"
+    Project     = "lesson-db-module"
   }
 } 
