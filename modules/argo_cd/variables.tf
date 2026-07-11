@@ -27,6 +27,11 @@ variable "target_revision" {
   default     = "main"
 }
 
+variable "db_host" {
+  description = "RDS endpoint (hostname) for the Django app"
+  type        = string
+}
+
 variable "db_user" {
   description = "PostgreSQL username"
   type        = string

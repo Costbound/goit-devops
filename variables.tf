@@ -47,5 +47,5 @@ variable "git_repo_url" {
 variable "git_branch" {
   description = "Git branch for Jenkins pipeline source"
   type        = string
-  default     = "lesson-8-9"
+  default     = "lesson-db-module"
 }

@@ -11,6 +11,7 @@ resource "kubernetes_secret" "django_app" {
   }
 
   data = {
+    POSTGRES_HOST     = var.db_host
     POSTGRES_USER     = var.db_user
     POSTGRES_PASSWORD = var.db_password
     SECRET_KEY        = var.django_secret_key

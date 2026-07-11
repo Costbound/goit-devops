@@ -5,7 +5,7 @@ Full GitOps setup on AWS EKS using Terraform, Jenkins, and Argo CD.
 ## Architecture
 
 ```
-git push → lesson-8-9
+git push → lesson-db-module
     └─► Jenkins (Kaniko build → ECR push)
             └─► updates charts/django-app/values.yaml on main
                     └─► Argo CD detects change → deploys to EKS
@@ -91,7 +91,7 @@ jenkins_admin_username = "admin"
 jenkins_admin_password = "..."
 
 git_repo_url = "https://github.com/your-org/your-repo.git"
-git_branch   = "lesson-8-9"
+git_branch   = "lesson-db-module"
 ```
 
 ### 2. Bootstrap S3 backend (first time only)
@@ -118,7 +118,7 @@ This provisions: VPC → ECR → EKS → Jenkins → Argo CD → Kubernetes secr
 ### 4. Configure kubectl
 
 ```bash
-aws eks update-kubeconfig --region us-east-1 --name lesson-8-9-eks-cluster
+aws eks update-kubeconfig --region us-east-1 --name lesson-db-module-eks-cluster
 ```
 
 ### 5. Get service URLs
@@ -144,7 +144,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 
 ## CI/CD Flow
 
-1. Push code to `lesson-8-9` branch
+1. Push code to `lesson-db-module` branch
 2. Jenkins pipeline triggers (manually or via webhook):
    - Kaniko builds the Docker image inside the cluster
    - Image pushed to ECR with tag = first 7 chars of commit SHA + `latest`

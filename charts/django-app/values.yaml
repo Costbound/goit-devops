@@ -24,20 +24,8 @@ hpa:
   cpuUtilizationPercentage: 70
 
 config:
-  POSTGRES_HOST: db
+  POSTGRES_HOST: ""  # Injected at deploy time via django-app-secrets (RDS endpoint)
   POSTGRES_PORT: "5432"
   POSTGRES_DB: django_db
   ALLOWED_HOSTS: "*"
   DEBUG: "False"
-
-# PostgreSQL — runs inside Kubernetes
-# For demo/development only. For production use AWS RDS instead.
-db:
-  image: postgres:15-alpine
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 250m
-      memory: 256Mi
