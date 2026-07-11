@@ -1,6 +1,6 @@
 image:
   repository: 615299736927.dkr.ecr.us-east-1.amazonaws.com/lesson-8-9/django-app
-  tag: "1f10a63"
+  tag: d33e761
   pullPolicy: Always
 
 replicaCount: 2
