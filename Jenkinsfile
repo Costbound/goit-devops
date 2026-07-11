@@ -56,7 +56,7 @@ spec:
                         git fetch origin main
                         git checkout -B main origin/main
                         sed -i "s|^\\([[:space:]]*repository: \\).*|\\1\${ECR_REGISTRY}/\${ECR_REPO}|" charts/django-app/values.yaml
-                        sed -i "s|^\\([[:space:]]*tag: \\).*|\\1\${IMAGE_TAG}|" charts/django-app/values.yaml
+                        sed -i "s|^\\([[:space:]]*tag: \\).*|\\1\"\${IMAGE_TAG}\"|" charts/django-app/values.yaml
                         git add charts/django-app/values.yaml
                         if git diff --cached --quiet; then
                             echo "No changes to commit"
