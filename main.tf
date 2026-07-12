@@ -83,6 +83,7 @@ module "rds" {
   db_name                    = "django_db"
   username                   = var.db_user
   password                   = var.db_password
+  db_port                    = 5432
   subnet_private_ids         = module.vpc.private_subnets
   subnet_public_ids          = module.vpc.public_subnets
   publicly_accessible        = false
