@@ -92,8 +92,10 @@ module "rds" {
   multi_az                   = false  # dev setting — no need for Multi-AZ
   backup_retention_period    = 7
   parameters = {
-    max_connections              = "200"
-    log_min_duration_statement   = "500"
+    max_connections            = "200"
+    log_min_duration_statement = "500"
+    log_statement              = "all"
+    work_mem                   = "4096"
   }
 
   tags = {

@@ -43,7 +43,6 @@ git push → lesson-db-module
 │       ├── values.yaml         # image.repository + image.tag updated by CI
 │       └── templates/
 │           ├── deployment.yaml # envFrom: ConfigMap + secretRef
-│           ├── db.yaml         # PostgreSQL — credentials from k8s secret
 │           ├── configmap.yaml  # Non-sensitive env vars only
 │           ├── service.yaml    # LoadBalancer (port 80 → 8000)
 │           └── hpa.yaml        # HPA: 2–6 pods at >70% CPU
@@ -52,6 +51,7 @@ git push → lesson-db-module
     ├── vpc/                    # VPC, subnets, IGW, NAT Gateway, route tables
     ├── ecr/                    # ECR repository
     ├── eks/                    # EKS cluster, node group, OIDC, EBS CSI driver
+    ├── rds/                    # Universal RDS module (standalone or Aurora), subnet group, SG, parameter group
     ├── jenkins/                # Jenkins Helm release + IRSA role for ECR push
     └── argo_cd/                # Argo CD Helm release, Application CRD, k8s secret
 ```
@@ -217,11 +217,12 @@ terraform destroy
 
 ## Modules
 
-| Module       | Description                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------------- |
-| `s3-backend` | S3 bucket with versioning and server-side encryption for Terraform state                     |
-| `vpc`        | VPC with 3 public + 3 private subnets across 3 AZs, IGW, NAT Gateway                         |
-| `ecr`        | ECR repository with `scan_on_push` enabled                                                   |
-| `eks`        | EKS cluster (1.31), managed node group (t3.medium, 2–3 nodes), OIDC provider, EBS CSI driver |
-| `jenkins`    | Jenkins via Helm (chart 5.9.32), JCasC auto-config, IRSA role with ECR push permissions      |
-| `argo_cd`    | Argo CD via Helm (chart 7.7.0), Application CRD pointing at `charts/django-app` on `main`    |
+| Module       | Description                                                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `s3-backend` | S3 bucket with versioning and server-side encryption for Terraform state                                                       |
+| `vpc`        | VPC with 3 public + 3 private subnets across 3 AZs, IGW, NAT Gateway                                                           |
+| `ecr`        | ECR repository with `scan_on_push` enabled                                                                                     |
+| `eks`        | EKS cluster (1.31), managed node group (t3.medium, 2–3 nodes), OIDC provider, EBS CSI driver                                   |
+| `rds`        | Universal RDS module — supports standalone PostgreSQL/MySQL instance or Aurora cluster, with subnet group, SG, parameter group |
+| `jenkins`    | Jenkins via Helm (chart 5.9.32), JCasC auto-config, IRSA role with ECR push permissions                                        |
+| `argo_cd`    | Argo CD via Helm (chart 7.7.0), Application CRD pointing at `charts/django-app` on `main`                                      |

@@ -60,3 +60,13 @@ output "argocd_url" {
   description = "Argo CD web UI URL"
   value       = module.argo_cd.argocd_url
 }
+
+output "rds_endpoint" {
+  description = "RDS writer endpoint"
+  value       = module.rds.endpoint
+}
+
+output "rds_port" {
+  description = "RDS database port"
+  value       = module.rds.port
+}
