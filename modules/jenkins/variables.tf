@@ -44,7 +44,7 @@ variable "git_repo_url" {
 variable "git_branch" {
   description = "Git branch for the Jenkins pipeline"
   type        = string
-  default     = "lesson-db-module"
+  default     = "final-project"
 }
 
 variable "ecr_registry" {

@@ -16,4 +16,4 @@ jenkins_admin_password = "change-me"
 
 # Git repository settings
 git_repo_url = "https://github.com/your-org/your-repo.git"
-git_branch   = "lesson-db-module"
+git_branch   = "final-project"

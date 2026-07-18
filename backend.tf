@@ -1,7 +1,7 @@
 # terraform {
 #   backend "s3" {
-#     bucket       = "lesson-db-module-terraform-state-bucket-adfjhad"
-#     key          = "lesson-db-module/terraform.tfstate"
+#     bucket       = "final-project-terraform-state-bucket-adfjhad"
+#     key          = "final-project/terraform.tfstate"
 #     region       = "us-east-1"
 #     use_lockfile = true
 #     encrypt      = true

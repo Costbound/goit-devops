@@ -1,6 +1,6 @@
 module "s3_backend" {
   source      = "./modules/s3-backend"
-  bucket_name = "lesson-db-module-terraform-state-bucket-adfjhad"
+  bucket_name = "final-project-terraform-state-bucket-adfjhad"
 }
 
 module "vpc" {
@@ -9,20 +9,20 @@ module "vpc" {
   public_subnets     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   private_subnets    = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
   availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
-  vpc_name           = "lesson-db-module-vpc"
-  cluster_name       = "lesson-db-module-eks-cluster"
+  vpc_name           = "final-project-vpc"
+  cluster_name       = "final-project-eks-cluster"
 }
 
 module "ecr" {
   source      = "./modules/ecr"
-  ecr_name    = "lesson-db-module/django-app"
+  ecr_name    = "final-project/django-app"
   scan_on_push = true
 }
 module "eks" {
   source          = "./modules/eks"
-  cluster_name    = "lesson-db-module-eks-cluster"
+  cluster_name    = "final-project-eks-cluster"
   subnet_ids      = module.vpc.private_subnets
-  node_group_name = "lesson-db-module-node-group"
+  node_group_name = "final-project-node-group"
   instance_type   = "t3.medium"
   desired_size    = 2
   max_size        = 3
@@ -68,7 +68,7 @@ module "argo_cd" {
 module "rds" {
   source = "./modules/rds"
 
-  name                       = "lesson-db-module-db"
+  name                       = "final-project-db"
   use_aurora                 = false
   aurora_instance_count      = 2
 
@@ -100,6 +100,6 @@ module "rds" {
 
   tags = {
     Environment = "dev"
-    Project     = "lesson-db-module"
+    Project     = "final-project"
   }
 } 

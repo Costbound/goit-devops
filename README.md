@@ -1,11 +1,11 @@
-# GoIT DevOps — Lessons 8-9: CI/CD on AWS EKS
+# GoIT DevOps — Final Project: CI/CD on AWS EKS
 
 Full GitOps setup on AWS EKS using Terraform, Jenkins, and Argo CD.
 
 ## Architecture
 
 ```
-git push → lesson-db-module
+git push → final-project
     └─► Jenkins (Kaniko build → ECR push)
             └─► updates charts/django-app/values.yaml on main
                     └─► Argo CD detects change → deploys to EKS
@@ -91,7 +91,7 @@ jenkins_admin_username = "admin"
 jenkins_admin_password = "..."
 
 git_repo_url = "https://github.com/your-org/your-repo.git"
-git_branch   = "lesson-db-module"
+git_branch   = "final-project"
 ```
 
 ### 2. Bootstrap S3 backend (first time only)
@@ -118,7 +118,7 @@ This provisions: VPC → ECR → EKS → Jenkins → Argo CD → Kubernetes secr
 ### 4. Configure kubectl
 
 ```bash
-aws eks update-kubeconfig --region us-east-1 --name lesson-db-module-eks-cluster
+aws eks update-kubeconfig --region us-east-1 --name final-project-eks-cluster
 ```
 
 ### 5. Get service URLs
@@ -144,7 +144,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 
 ## CI/CD Flow
 
-1. Push code to `lesson-db-module` branch
+1. Push code to `final-project` branch
 2. Jenkins pipeline triggers (manually or via webhook):
    - Kaniko builds the Docker image inside the cluster
    - Image pushed to ECR with tag = first 7 chars of commit SHA + `latest`
