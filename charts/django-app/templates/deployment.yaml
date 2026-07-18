@@ -32,6 +32,22 @@ spec:
                 name: {{ .Release.Name }}-config
             - secretRef:
                 name: django-app-secrets
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
           resources:
             requests:
               cpu: {{ .Values.resources.requests.cpu }}
@@ -39,4 +55,3 @@ spec:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
               memory: {{ .Values.resources.limits.memory }}
-

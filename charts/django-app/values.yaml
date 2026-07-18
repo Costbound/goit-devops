@@ -1,6 +1,6 @@
 image:
   repository: 615299736927.dkr.ecr.us-east-1.amazonaws.com/final-project/django-app
-  tag: a377e27
+  tag: "69bb3eb"
   pullPolicy: Always
 
 replicaCount: 2
