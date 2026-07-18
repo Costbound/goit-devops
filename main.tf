@@ -103,3 +103,14 @@ module "rds" {
     Project     = "final-project"
   }
 } 
+
+module "monitoring" {
+  source                  = "./modules/monitoring"
+  cluster_name             = module.eks.eks_cluster_name
+  grafana_admin_password   = var.grafana_admin_password
+
+  providers = {
+    helm       = helm
+    kubernetes = kubernetes
+  }
+}

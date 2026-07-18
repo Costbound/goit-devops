@@ -70,3 +70,8 @@ output "rds_port" {
   description = "RDS database port"
   value       = module.rds.port
 }
+
+output "grafana_url" {
+  description = "Grafana web UI URL"
+  value       = module.monitoring.grafana_url
+}
