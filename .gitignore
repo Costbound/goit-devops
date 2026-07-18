@@ -1,15 +1,23 @@
 # Environment variables
 .env
 
-# Helm secret values
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Helm secret values (generated from secrets.yaml.tpl via terraform)
 secrets.yaml
+
+# Terraform secret values
+terraform.tfvars
 # Helm downloaded dependencies
 charts/django-app/charts/
 # Terraform working directory
 .terraform/
 
 # State files
-terraform.tfstate
+terraform.tfstate*
 terraform.tfstate.backup
 errored.tfstate
 .terraform.lock.hcl
